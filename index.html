@@ -22,7 +22,6 @@
         <div class="nav-links">
           <a href="#about">About</a>
           <a href="#coaching">Coaching</a>
-          <a href="#shop">Shop</a>
           <a href="#owner">Owner Login</a>
         </div>
       </nav>
@@ -66,42 +65,6 @@
         </div>
       </section>
 
-      <section class="section" id="shop">
-        <div class="container">
-          <div class="section-head">
-            <p class="eyebrow">SportsCo Products</p>
-            <h2>Shop by category</h2>
-          </div>
-          <div id="product-list" class="shop-categories"></div>
-        </div>
-      </section>
-
-      <section class="section alt" id="cart">
-        <div class="container cart-layout">
-          <div>
-            <div class="section-head">
-              <p class="eyebrow">Cart</p>
-              <h2>Your selected items</h2>
-            </div>
-            <div id="cart-items" class="cart-items"></div>
-          </div>
-
-          <aside class="cart-summary" id="checkout">
-            <h3>Order Summary</h3>
-            <div class="summary-row"><span>Subtotal</span><strong id="subtotal">$0.00</strong></div>
-            <div class="summary-row"><span>Estimated Tax (10%)</span><strong id="tax">$0.00</strong></div>
-            <div class="summary-row total"><span>Total</span><strong id="total">$0.00</strong></div>
-
-            <label for="stripe-link">Stripe Checkout Link</label>
-            <input id="stripe-link" type="url" placeholder="https://checkout.stripe.com/..." />
-            <p class="helper-text">Paste your Stripe payment link. The checkout button will use this URL.</p>
-
-            <button class="btn btn-primary full" id="checkout-btn">Proceed to Payment</button>
-            <button class="btn btn-secondary full" id="clear-cart-btn">Clear Cart</button>
-          </aside>
-        </div>
-      </section>
-
       <section class="section" id="owner">
         <div class="container owner-wrap">
           <div class="section-head">
@@ -117,6 +80,40 @@
           </form>
 
           <div id="owner-panel" hidden>
+            <section class="owner-commerce">
+              <div class="section-head compact">
+                <p class="eyebrow">Store Preview</p>
+                <h3>Shop by category</h3>
+              </div>
+              <div id="product-list" class="shop-categories"></div>
+            </section>
+
+            <section class="owner-commerce alt-block">
+              <div class="cart-layout">
+                <div>
+                  <div class="section-head compact">
+                    <p class="eyebrow">Cart</p>
+                    <h3>Your selected items</h3>
+                  </div>
+                  <div id="cart-items" class="cart-items"></div>
+                </div>
+
+                <aside class="cart-summary" id="checkout">
+                  <h3>Order Summary</h3>
+                  <div class="summary-row"><span>Subtotal</span><strong id="subtotal">$0.00</strong></div>
+                  <div class="summary-row"><span>Estimated Tax (10%)</span><strong id="tax">$0.00</strong></div>
+                  <div class="summary-row total"><span>Total</span><strong id="total">$0.00</strong></div>
+
+                  <label for="stripe-link">Stripe Checkout Link</label>
+                  <input id="stripe-link" type="url" placeholder="https://checkout.stripe.com/..." />
+                  <p class="helper-text">Paste your Stripe payment link. The checkout button will use this URL.</p>
+
+                  <button class="btn btn-primary full" id="checkout-btn">Proceed to Payment</button>
+                  <button class="btn btn-secondary full" id="clear-cart-btn">Clear Cart</button>
+                </aside>
+              </div>
+            </section>
+
             <form id="owner-add-form" class="owner-add-form">
               <h3>Add Product</h3>
               <input id="owner-product-name" type="text" placeholder="Product name" required />

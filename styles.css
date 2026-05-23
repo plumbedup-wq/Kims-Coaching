@@ -72,6 +72,11 @@ input[type="url"], input[type="text"], input[type="number"], input[type="passwor
 .owner-meta { font-size: 0.84rem; color: var(--muted); margin-top: 0.2rem !important; }
 
 .owner-wrap { display: grid; gap: 1rem; }
+
+.owner-commerce { display: grid; gap: 1rem; margin-bottom: 1rem; }
+.alt-block { background: #f2f6fc; border: 1px solid var(--border); border-radius: var(--radius); padding: 1rem; }
+.section-head.compact { margin-bottom: 0.4rem; }
+
 .owner-login-form, .owner-add-form, .owner-products { padding: 1rem; }
 .owner-add-form { display: grid; gap: 0.6rem; }
 .owner-products { display: grid; gap: 0.8rem; }
