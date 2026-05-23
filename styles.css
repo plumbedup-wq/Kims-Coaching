@@ -20,18 +20,15 @@ body { margin: 0; font-family: "Inter", sans-serif; color: var(--text); backgrou
 .nav-links { display: flex; gap: 1rem; }
 .nav-links a { color: var(--muted); text-decoration: none; }
 
-
-.sponsor-strip { border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); background: #fbfdff; }
-.sponsor-inner { min-height: 78px; display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
-.sponsor-note { margin: 0; color: var(--muted); font-weight: 500; }
-.head-link { text-decoration: none; }
-.head-logo { font-size: clamp(2rem, 4vw, 2.7rem); letter-spacing: 0.06em; font-weight: 800; color: #222126; line-height: 1; }
-
 .hero, .section { padding: 3rem 0; }
 .hero-copy p, .section p { color: var(--muted); }
 .eyebrow { color: var(--primary); font-size: 0.8rem; letter-spacing: 0.08em; text-transform: uppercase; font-weight: 600; }
 h1 { font-size: clamp(1.8rem, 4vw, 2.8rem); margin: 0.3rem 0 0.8rem; }
 h2, h3 { margin: 0.3rem 0 0.8rem; }
+
+.shop-categories { display: grid; gap: 2rem; }
+.category-section { display: grid; gap: 1rem; }
+.category-title { margin: 0; font-size: 1.2rem; }
 
 .cards { display: grid; gap: 1rem; }
 .three-col { grid-template-columns: repeat(3, minmax(0, 1fr)); }
@@ -72,6 +69,7 @@ input[type="url"], input[type="text"], input[type="number"], input[type="passwor
   width: 100%; margin-top: 0.4rem; border: 1px solid var(--border); border-radius: 10px; background: #ffffff; color: var(--text); padding: 0.6rem 0.7rem;
 }
 .helper-text { font-size: 0.82rem; color: var(--muted); margin: 0.45rem 0; }
+.owner-meta { font-size: 0.84rem; color: var(--muted); margin-top: 0.2rem !important; }
 
 .owner-wrap { display: grid; gap: 1rem; }
 .owner-login-form, .owner-add-form, .owner-products { padding: 1rem; }
@@ -81,9 +79,15 @@ input[type="url"], input[type="text"], input[type="number"], input[type="passwor
 .owner-product-row p { margin: 0; }
 .owner-row-actions { display: grid; gap: 0.4rem; width: 180px; }
 
+.site-footer { border-top: 1px solid var(--border); background: #fbfdff; }
+.footer-inner { min-height: 84px; display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
+.footer-copy { margin: 0; color: var(--muted); font-weight: 500; }
+.head-link { text-decoration: none; }
+.head-logo { font-size: clamp(2rem, 4vw, 2.4rem); letter-spacing: 0.06em; font-weight: 800; color: #222126; line-height: 1; }
+
 @media (max-width: 900px) {
   .nav-links { display: none; }
-  .sponsor-inner { flex-direction: column; justify-content: center; padding: 0.8rem 0; text-align: center; }
   .three-col, .cart-layout, .owner-product-row { grid-template-columns: 1fr; display: grid; }
   .owner-row-actions { width: 100%; }
+  .footer-inner { flex-direction: column; justify-content: center; padding: 0.9rem 0; text-align: center; }
 }

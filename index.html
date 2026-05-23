@@ -20,35 +20,48 @@
           <span class="brand-sub">COACHING</span>
         </a>
         <div class="nav-links">
+          <a href="#about">About</a>
+          <a href="#coaching">Coaching</a>
           <a href="#shop">Shop</a>
-          <a href="#cart">Cart</a>
-          <a href="#checkout">Checkout</a>
           <a href="#owner">Owner Login</a>
         </div>
       </nav>
     </header>
 
     <main>
-
-      <section class="sponsor-strip" aria-label="Sponsor">
-        <div class="container sponsor-inner">
-          <p class="sponsor-note">Proudly sponsored by HEAD NZ.</p>
-          <a class="head-link" href="https://www.head.com/en_NZ/" target="_blank" rel="noopener noreferrer" aria-label="Visit HEAD New Zealand website">
-            <span class="head-logo" aria-hidden="true">HEAD</span>
-          </a>
+      <section class="hero" id="about">
+        <div class="container hero-grid">
+          <div class="hero-copy">
+            <p class="eyebrow">Kim Jones Coaching</p>
+            <h1>Performance coaching for athletes who want real progress.</h1>
+            <p>
+              Kim Jones is a dedicated coach focused on helping athletes build confidence,
+              improve consistency, and perform at their highest level with practical,
+              personalized coaching.
+            </p>
+          </div>
         </div>
       </section>
 
-      <section class="hero">
-        <div class="container hero-grid">
-          <div class="hero-copy">
-            <p class="eyebrow">Coaching + SportsCo Store</p>
-            <h1>Easy product sales now, API integration later.</h1>
-            <p>
-              This setup gives you a lightweight sales system: upload products
-              yourself, adjust pricing anytime, and route payment through your
-              Stripe checkout link.
-            </p>
+      <section class="section" id="coaching">
+        <div class="container">
+          <div class="section-head">
+            <p class="eyebrow">Coaching</p>
+            <h2>What athletes can expect</h2>
+          </div>
+          <div class="cards three-col">
+            <article class="product-card">
+              <h3>1:1 Coaching</h3>
+              <p>Tailored sessions focused on your strengths, gaps, and competition goals.</p>
+            </article>
+            <article class="product-card">
+              <h3>Development Plans</h3>
+              <p>Simple, structured plans that make weekly progress easy to track.</p>
+            </article>
+            <article class="product-card">
+              <h3>Support & Accountability</h3>
+              <p>Regular feedback and clear action points so you stay on track and improving.</p>
+            </article>
           </div>
         </div>
       </section>
@@ -57,9 +70,9 @@
         <div class="container">
           <div class="section-head">
             <p class="eyebrow">SportsCo Products</p>
-            <h2>Add products to cart</h2>
+            <h2>Shop by category</h2>
           </div>
-          <div class="cards three-col" id="product-list"></div>
+          <div id="product-list" class="shop-categories"></div>
         </div>
       </section>
 
@@ -93,7 +106,7 @@
         <div class="container owner-wrap">
           <div class="section-head">
             <p class="eyebrow">Owner Access</p>
-            <h2>Manage products and prices without an API</h2>
+            <h2>Manage products, categories, and prices</h2>
             <p id="owner-status" class="helper-text"></p>
           </div>
 
@@ -109,6 +122,7 @@
               <input id="owner-product-name" type="text" placeholder="Product name" required />
               <input id="owner-product-price" type="number" step="0.01" min="0" placeholder="Price" required />
               <input id="owner-product-discount" type="number" step="0.01" min="0" max="100" placeholder="Discount % (optional)" />
+              <input id="owner-product-category" type="text" placeholder="Category (e.g. Rackets, Shoes, Accessories)" required />
               <input id="owner-product-desc" type="text" placeholder="Short description" />
               <label for="owner-product-image">Product image</label>
               <input id="owner-product-image" type="file" accept="image/*" />
@@ -121,6 +135,15 @@
         </div>
       </section>
     </main>
+
+    <footer class="site-footer">
+      <div class="container footer-inner">
+        <p class="footer-copy">Kim Jones Coaching — Proudly sponsored by HEAD.</p>
+        <a class="head-link" href="https://www.head.com/en_NZ/" target="_blank" rel="noopener noreferrer" aria-label="Visit HEAD New Zealand website">
+          <span class="head-logo" aria-hidden="true">HEAD</span>
+        </a>
+      </div>
+    </footer>
 
     <script src="app.js"></script>
   </body>
