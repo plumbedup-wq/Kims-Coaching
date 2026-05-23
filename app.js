@@ -2,6 +2,8 @@ const CART_KEY = "kims_cart";
 const STRIPE_KEY = "kims_stripe_link";
 const PRODUCTS_KEY = "kims_products";
 const OWNER_AUTH_KEY = "kims_owner_authenticated";
+const PROMO_SETTINGS_KEY = "kims_promo_settings";
+const APPLIED_PROMO_CODE_KEY = "kims_applied_promo_code";
 const OWNER_PASSCODE = "coach-admin-2026";
 
 const defaultProducts = [
@@ -18,6 +20,10 @@ const totalEl = document.getElementById("total");
 const stripeInputEl = document.getElementById("stripe-link");
 const checkoutBtnEl = document.getElementById("checkout-btn");
 const clearCartBtnEl = document.getElementById("clear-cart-btn");
+const promoDiscountEl = document.getElementById("promo-discount");
+const promoCodeEl = document.getElementById("promo-code");
+const applyPromoBtnEl = document.getElementById("apply-promo-btn");
+const promoMessageEl = document.getElementById("promo-message");
 
 const ownerLoginFormEl = document.getElementById("owner-login-form");
 const ownerPasscodeEl = document.getElementById("owner-passcode");
@@ -36,6 +42,10 @@ const categoryFilterEl = document.getElementById("category-filter");
 const ownerProductCategorySelectEl = document.getElementById("owner-product-category");
 const ownerNewCategoryEl = document.getElementById("owner-new-category");
 const addCategoryBtnEl = document.getElementById("add-category-btn");
+const ownerPromoFormEl = document.getElementById("owner-promo-form");
+const ownerPromoCodeEl = document.getElementById("owner-promo-code");
+const ownerPromoPercentEl = document.getElementById("owner-promo-percent");
+const ownerPromoStatusEl = document.getElementById("owner-promo-status");
 
 const money = (v) => `$${v.toFixed(2)}`;
 const slugify = (v) => v.toLowerCase().trim().replace(/\s+/g, "-").replace(/[^a-z0-9-]/g, "");
@@ -71,6 +81,22 @@ const saveProducts = (products) => localStorage.setItem(PRODUCTS_KEY, JSON.strin
 const loadCart = () => JSON.parse(localStorage.getItem(CART_KEY) || "[]");
 const saveCart = (cart) => localStorage.setItem(CART_KEY, JSON.stringify(cart));
 
+
+function loadPromoSettings() {
+  const raw = localStorage.getItem(PROMO_SETTINGS_KEY);
+  return raw ? JSON.parse(raw) : { code: "", percent: 0 };
+}
+
+function savePromoSettings(code, percent) {
+  localStorage.setItem(PROMO_SETTINGS_KEY, JSON.stringify({ code, percent }));
+}
+
+function getAppliedPromoPercent() {
+  const appliedCode = (localStorage.getItem(APPLIED_PROMO_CODE_KEY) || "").trim().toLowerCase();
+  const promo = loadPromoSettings();
+  if (!appliedCode || !promo.code) return 0;
+  return appliedCode === promo.code.toLowerCase() ? Number(promo.percent || 0) : 0;
+}
 function getCategoryList(products) {
   return [...new Set(products.map((p) => (p.category?.trim() || "Uncategorized")))].sort((a,b)=>a.localeCompare(b));
 }
@@ -162,9 +188,15 @@ function renderCart() {
 
   const subtotal = cart.reduce((sum, item) => sum + Number(item.price) * item.quantity, 0);
   const tax = subtotal * 0.1;
+  const prePromoTotal = subtotal + tax;
+  const promoPercent = getAppliedPromoPercent();
+  const promoDiscount = prePromoTotal * (promoPercent / 100);
+  const finalTotal = Math.max(0, prePromoTotal - promoDiscount);
+
   subtotalEl.textContent = money(subtotal);
   taxEl.textContent = money(tax);
-  totalEl.textContent = money(subtotal + tax);
+  if (promoDiscountEl) promoDiscountEl.textContent = `-${money(promoDiscount)}`;
+  totalEl.textContent = money(finalTotal);
 }
 
 function addToCart(product) {
@@ -247,6 +279,28 @@ if (addCategoryBtnEl) addCategoryBtnEl.addEventListener("click", () => {
   if (ownerNewCategoryEl) ownerNewCategoryEl.value = "";
 });
 
+if (applyPromoBtnEl) applyPromoBtnEl.addEventListener("click", () => {
+  const entered = (promoCodeEl?.value || "").trim();
+  const promo = loadPromoSettings();
+
+  if (!entered) {
+    localStorage.removeItem(APPLIED_PROMO_CODE_KEY);
+    if (promoMessageEl) promoMessageEl.textContent = "Promo removed.";
+    renderCart();
+    return;
+  }
+
+  if (promo.code && entered.toLowerCase() === promo.code.toLowerCase()) {
+    localStorage.setItem(APPLIED_PROMO_CODE_KEY, entered);
+    if (promoMessageEl) promoMessageEl.textContent = `Promo applied: ${promo.percent}% off.`;
+  } else {
+    localStorage.removeItem(APPLIED_PROMO_CODE_KEY);
+    if (promoMessageEl) promoMessageEl.textContent = "Invalid promo code.";
+  }
+
+  renderCart();
+});
+
 if (checkoutBtnEl) checkoutBtnEl.addEventListener("click", () => {
   const cart = loadCart();
   const link = (localStorage.getItem(STRIPE_KEY) || "").trim();
@@ -271,6 +325,20 @@ if (ownerLoginFormEl) ownerLoginFormEl.addEventListener("submit", (event) => {
 if (ownerLogoutBtnEl) ownerLogoutBtnEl.addEventListener("click", () => {
   setOwnerAuthed(false);
   setOwnerUI();
+});
+
+if (ownerPromoFormEl) ownerPromoFormEl.addEventListener("submit", (event) => {
+  event.preventDefault();
+  const code = (ownerPromoCodeEl?.value || "").trim();
+  const percent = Number(ownerPromoPercentEl?.value || 0);
+
+  if (!code || Number.isNaN(percent) || percent < 0 || percent > 100) {
+    if (ownerPromoStatusEl) ownerPromoStatusEl.textContent = "Enter valid promo code and discount (0-100).";
+    return;
+  }
+
+  savePromoSettings(code, percent);
+  if (ownerPromoStatusEl) ownerPromoStatusEl.textContent = `Saved promo ${code} (${percent}% off).`;
 });
 
 if (ownerAddFormEl) ownerAddFormEl.addEventListener("submit", async (event) => {
@@ -360,3 +428,13 @@ if (stripeInputEl) loadStripeLink();
 if (productListEl) renderProducts();
 if (cartItemsEl) renderCart();
 if (ownerStatusEl) setOwnerUI();
+
+if (promoCodeEl) {
+  const applied = localStorage.getItem(APPLIED_PROMO_CODE_KEY) || "";
+  promoCodeEl.value = applied;
+}
+if (ownerPromoCodeEl || ownerPromoPercentEl) {
+  const promo = loadPromoSettings();
+  if (ownerPromoCodeEl) ownerPromoCodeEl.value = promo.code || "";
+  if (ownerPromoPercentEl) ownerPromoPercentEl.value = promo.percent || 0;
+}

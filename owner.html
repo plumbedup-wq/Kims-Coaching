@@ -38,6 +38,14 @@
           </form>
 
           <div id="owner-panel" hidden>
+            <form id="owner-promo-form" class="owner-add-form">
+              <h3>Promo Code Settings</h3>
+              <input id="owner-promo-code" type="text" placeholder="Promo code (e.g. KIM20)" />
+              <input id="owner-promo-percent" type="number" step="0.01" min="0" max="100" placeholder="Promo discount %" />
+              <button type="submit" class="btn btn-primary">Save Promo Settings</button>
+              <p class="helper-text" id="owner-promo-status"></p>
+            </form>
+
             <form id="owner-add-form" class="owner-add-form">
               <h3>Add Product</h3>
               <input id="owner-product-name" type="text" placeholder="Product name" required />
