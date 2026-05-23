@@ -43,7 +43,14 @@
               <input id="owner-product-name" type="text" placeholder="Product name" required />
               <input id="owner-product-price" type="number" step="0.01" min="0" placeholder="Price" required />
               <input id="owner-product-discount" type="number" step="0.01" min="0" max="100" placeholder="Discount % (optional)" />
-              <input id="owner-product-category" type="text" placeholder="Category (e.g. Rackets, Shoes, Accessories)" required />
+              <label for="owner-product-category">Category</label>
+              <select id="owner-product-category" required>
+                <option value="">Select category</option>
+              </select>
+              <div class="category-add-row">
+                <input id="owner-new-category" type="text" placeholder="Add new category" />
+                <button type="button" class="btn btn-secondary" id="add-category-btn">Add Category</button>
+              </div>
               <input id="owner-product-desc" type="text" placeholder="Short description" />
               <label for="owner-product-image">Product image</label>
               <input id="owner-product-image" type="file" accept="image/*" />

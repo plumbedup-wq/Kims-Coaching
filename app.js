@@ -33,6 +33,9 @@ const ownerProductImageEl = document.getElementById("owner-product-image");
 const ownerProductsListEl = document.getElementById("owner-products-list");
 const ownerLogoutBtnEl = document.getElementById("owner-logout-btn");
 const categoryFilterEl = document.getElementById("category-filter");
+const ownerProductCategorySelectEl = document.getElementById("owner-product-category");
+const ownerNewCategoryEl = document.getElementById("owner-new-category");
+const addCategoryBtnEl = document.getElementById("add-category-btn");
 
 const money = (v) => `$${v.toFixed(2)}`;
 const slugify = (v) => v.toLowerCase().trim().replace(/\s+/g, "-").replace(/[^a-z0-9-]/g, "");
@@ -72,6 +75,39 @@ function getCategoryList(products) {
   return [...new Set(products.map((p) => (p.category?.trim() || "Uncategorized")))].sort((a,b)=>a.localeCompare(b));
 }
 
+
+function getNormalizedCategoryName(name) {
+  return name.trim().replace(/\s+/g, " ");
+}
+
+function upsertCategoryOption(categoryName) {
+  if (!ownerProductCategorySelectEl) return;
+  const normalized = getNormalizedCategoryName(categoryName);
+  if (!normalized) return;
+
+  const exists = [...ownerProductCategorySelectEl.options].some(
+    (opt) => opt.value.toLowerCase() === normalized.toLowerCase()
+  );
+
+  if (!exists) {
+    const opt = document.createElement("option");
+    opt.value = normalized;
+    opt.textContent = normalized;
+    ownerProductCategorySelectEl.appendChild(opt);
+  }
+}
+
+function renderOwnerCategorySelect(products) {
+  if (!ownerProductCategorySelectEl) return;
+  const categories = getCategoryList(products);
+  const current = ownerProductCategorySelectEl.value;
+
+  ownerProductCategorySelectEl.innerHTML = '<option value="">Select category</option>';
+  categories.forEach((cat) => upsertCategoryOption(cat));
+
+  const canKeepCurrent = categories.some((cat) => cat.toLowerCase() === current.toLowerCase());
+  ownerProductCategorySelectEl.value = canKeepCurrent ? current : "";
+}
 function renderCategoryFilter(products) {
   if (!categoryFilterEl) return;
   const categories = getCategoryList(products);
@@ -83,6 +119,7 @@ function renderCategoryFilter(products) {
 function renderProducts() {
   const products = loadProducts();
   renderCategoryFilter(products);
+  renderOwnerCategorySelect(products);
 
   const filteredProducts = selectedCategory === "all"
     ? products
@@ -193,6 +230,23 @@ if (categoryFilterEl) categoryFilterEl.addEventListener("change", () => {
   selectedCategory = categoryFilterEl.value;
   renderProducts();
 });
+if (addCategoryBtnEl) addCategoryBtnEl.addEventListener("click", () => {
+  const raw = ownerNewCategoryEl?.value || "";
+  const newCategory = getNormalizedCategoryName(raw);
+  if (!newCategory) return;
+
+  const products = loadProducts();
+  const existsInProducts = products.some((p) => (p.category || "").trim().toLowerCase() === newCategory.toLowerCase());
+  if (!existsInProducts) {
+    // Persist category by adding/removing a placeholder product category source is avoided; category list is derived from products,
+    // so we just keep it in dropdown until it is used in a product.
+  }
+
+  upsertCategoryOption(newCategory);
+  ownerProductCategorySelectEl.value = newCategory;
+  if (ownerNewCategoryEl) ownerNewCategoryEl.value = "";
+});
+
 if (checkoutBtnEl) checkoutBtnEl.addEventListener("click", () => {
   const cart = loadCart();
   const link = (localStorage.getItem(STRIPE_KEY) || "").trim();
@@ -240,7 +294,7 @@ if (ownerAddFormEl) ownerAddFormEl.addEventListener("submit", async (event) => {
     name: ownerProductNameEl.value.trim(),
     price: Number(ownerProductPriceEl.value),
     discount: Number(ownerProductDiscountEl.value || 0),
-    category: ownerProductCategoryEl.value.trim(),
+    category: getNormalizedCategoryName(ownerProductCategorySelectEl?.value || ""),
     description: ownerProductDescEl.value.trim(),
     image: imageData
   };
