@@ -69,41 +69,29 @@ const saveCart = (cart) => localStorage.setItem(CART_KEY, JSON.stringify(cart));
 function renderProducts() {
   const products = loadProducts();
 
-  const grouped = products.reduce((acc, p) => {
-    const key = p.category?.trim() || "Uncategorized";
-    if (!acc[key]) acc[key] = [];
-    acc[key].push(p);
-    return acc;
-  }, {});
-
-  const sections = Object.entries(grouped)
-    .sort(([a], [b]) => a.localeCompare(b))
-    .map(([category, items]) => {
-      const cards = items
-        .map((p) => {
-          const discounted = getDiscountedPrice(p);
-          const hasDiscount = Number(p.discount || 0) > 0;
-          return `
-            <article class="product-card" data-id="${p.id}" data-name="${p.name}" data-price="${discounted}">
-              <div class="product-image-wrap">
-                ${p.image ? `<img src="${p.image}" alt="${p.name}" class="product-image" />` : `<div class="product-image product-image-placeholder">No image</div>`}
-              </div>
-              <h3>${p.name}</h3>
-              <p>${p.description || "Product description"}</p>
-              <div class="price-wrap">
-                ${hasDiscount ? `<p class="old-price">${money(Number(p.price))}</p>` : ""}
-                <p class="price">${money(discounted)} ${hasDiscount ? `<span class="discount-badge">-${Number(p.discount)}%</span>` : ""}</p>
-              </div>
-              <button class="btn btn-primary add-to-cart">Add to Cart</button>
-            </article>`;
-        })
-        .join("");
-
-      return `<section class="category-section" id="cat-${slugify(category)}"><h3 class="category-title">${category}</h3><div class="cards three-col">${cards}</div></section>`;
+  const cards = products
+    .sort((a, b) => (a.category || "").localeCompare(b.category || "") || a.name.localeCompare(b.name))
+    .map((p) => {
+      const discounted = getDiscountedPrice(p);
+      const hasDiscount = Number(p.discount || 0) > 0;
+      return `
+        <article class="product-card" data-id="${p.id}" data-name="${p.name}" data-price="${discounted}">
+          <div class="product-image-wrap">
+            ${p.image ? `<img src="${p.image}" alt="${p.name}" class="product-image" />` : `<div class="product-image product-image-placeholder">No image</div>`}
+          </div>
+          <p class="owner-meta">${p.category || "Uncategorized"}</p>
+          <h3>${p.name}</h3>
+          <p>${p.description || "Product description"}</p>
+          <div class="price-wrap">
+            ${hasDiscount ? `<p class="old-price">${money(Number(p.price))}</p>` : ""}
+            <p class="price">${money(discounted)} ${hasDiscount ? `<span class="discount-badge">-${Number(p.discount)}%</span>` : ""}</p>
+          </div>
+          <button class="btn btn-primary add-to-cart">Add to Cart</button>
+        </article>`;
     })
     .join("");
 
-  productListEl.innerHTML = sections;
+  productListEl.innerHTML = `<div class="cards three-col">${cards}</div>`;
 }
 
 function renderCart() {
