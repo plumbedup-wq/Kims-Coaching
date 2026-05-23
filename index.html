@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Kim Jones Coaching</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header class="site-header">
+      <nav class="container nav">
+        <a href="#" class="brand" aria-label="Kim Jones Coaching home">
+          <span class="brand-main">KIM JONES</span>
+          <span class="brand-sub">COACHING</span>
+        </a>
+        <div class="nav-links">
+          <a href="#programs">Programs</a>
+          <a href="#shop">Shop</a>
+          <a href="#cart">Cart</a>
+          <a href="#checkout">Checkout</a>
+        </div>
+      </nav>
+    </header>
+
+    <main>
+      <section class="hero">
+        <div class="container hero-grid">
+          <div class="hero-copy">
+            <p class="eyebrow">Coaching + SportsCo Store</p>
+            <h1>Train better and buy the right gear in one place.</h1>
+            <p>
+              Placeholder homepage copy for now. You can update all text later,
+              but the sales flow is ready for product selection, cart updates,
+              and Stripe checkout linking.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="shop">
+        <div class="container">
+          <div class="section-head">
+            <p class="eyebrow">SportsCo Products</p>
+            <h2>Add products to cart</h2>
+          </div>
+
+          <div class="cards three-col" id="product-list">
+            <article class="product-card" data-id="agility-kit" data-name="Speed Agility Kit" data-price="59.99">
+              <h3>Speed Agility Kit</h3>
+              <p>Cones, ladder, and bands for movement sessions.</p>
+              <p class="price">$59.99</p>
+              <button class="btn btn-primary add-to-cart">Add to Cart</button>
+            </article>
+
+            <article class="product-card" data-id="power-bands" data-name="Resistance Power Bands" data-price="29.99">
+              <h3>Resistance Power Bands</h3>
+              <p>Warmup and strength band set.</p>
+              <p class="price">$29.99</p>
+              <button class="btn btn-primary add-to-cart">Add to Cart</button>
+            </article>
+
+            <article class="product-card" data-id="recovery-roller" data-name="Recovery Roller" data-price="34.99">
+              <h3>Recovery Roller</h3>
+              <p>Compact roller for post-session recovery.</p>
+              <p class="price">$34.99</p>
+              <button class="btn btn-primary add-to-cart">Add to Cart</button>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section class="section alt" id="cart">
+        <div class="container cart-layout">
+          <div>
+            <div class="section-head">
+              <p class="eyebrow">Cart</p>
+              <h2>Your selected items</h2>
+            </div>
+            <div id="cart-items" class="cart-items"></div>
+          </div>
+
+          <aside class="cart-summary" id="checkout">
+            <h3>Order Summary</h3>
+            <div class="summary-row"><span>Subtotal</span><strong id="subtotal">$0.00</strong></div>
+            <div class="summary-row"><span>Estimated Tax (10%)</span><strong id="tax">$0.00</strong></div>
+            <div class="summary-row total"><span>Total</span><strong id="total">$0.00</strong></div>
+
+            <label for="stripe-link">Stripe Checkout Link</label>
+            <input id="stripe-link" type="url" placeholder="https://checkout.stripe.com/..." />
+            <p class="helper-text">Paste your Stripe payment link. The checkout button will use this URL.</p>
+
+            <button class="btn btn-primary full" id="checkout-btn">Proceed to Payment</button>
+            <button class="btn btn-secondary full" id="clear-cart-btn">Clear Cart</button>
+          </aside>
+        </div>
+      </section>
+    </main>
+
+    <script src="app.js"></script>
+  </body>
+</html>
