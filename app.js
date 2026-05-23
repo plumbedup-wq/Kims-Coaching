@@ -5,9 +5,27 @@ const OWNER_AUTH_KEY = "kims_owner_authenticated";
 const OWNER_PASSCODE = "coach-admin-2026";
 
 const defaultProducts = [
-  { id: "agility-kit", name: "Speed Agility Kit", price: 59.99, description: "Cones, ladder, and bands for movement sessions." },
-  { id: "power-bands", name: "Resistance Power Bands", price: 29.99, description: "Warmup and strength band set." },
-  { id: "recovery-roller", name: "Recovery Roller", price: 34.99, description: "Compact roller for post-session recovery." }
+  {
+    id: "agility-kit",
+    name: "Speed Agility Kit",
+    price: 59.99,
+    description: "Cones, ladder, and bands for movement sessions.",
+    image: ""
+  },
+  {
+    id: "power-bands",
+    name: "Resistance Power Bands",
+    price: 29.99,
+    description: "Warmup and strength band set.",
+    image: ""
+  },
+  {
+    id: "recovery-roller",
+    name: "Recovery Roller",
+    price: 34.99,
+    description: "Compact roller for post-session recovery.",
+    image: ""
+  }
 ];
 
 const productListEl = document.getElementById("product-list");
@@ -27,11 +45,21 @@ const ownerAddFormEl = document.getElementById("owner-add-form");
 const ownerProductNameEl = document.getElementById("owner-product-name");
 const ownerProductPriceEl = document.getElementById("owner-product-price");
 const ownerProductDescEl = document.getElementById("owner-product-desc");
+const ownerProductImageEl = document.getElementById("owner-product-image");
 const ownerProductsListEl = document.getElementById("owner-products-list");
 const ownerLogoutBtnEl = document.getElementById("owner-logout-btn");
 
 function money(value) {
   return `$${value.toFixed(2)}`;
+}
+
+function fileToDataUrl(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = () => reject(new Error("Failed to read image."));
+    reader.readAsDataURL(file);
+  });
 }
 
 function loadProducts() {
@@ -61,6 +89,9 @@ function renderProducts() {
     .map(
       (p) => `
         <article class="product-card" data-id="${p.id}" data-name="${p.name}" data-price="${p.price}">
+          <div class="product-image-wrap">
+            ${p.image ? `<img src="${p.image}" alt="${p.name}" class="product-image" />` : `<div class="product-image product-image-placeholder">No image</div>`}
+          </div>
           <h3>${p.name}</h3>
           <p>${p.description || "Product description"}</p>
           <p class="price">${money(Number(p.price))}</p>
@@ -149,6 +180,7 @@ function renderOwnerProducts() {
         <div>
           <strong>${p.name}</strong>
           <p>${p.description || "No description"}</p>
+          ${p.image ? `<img src="${p.image}" alt="${p.name}" class="owner-thumb" />` : ""}
         </div>
         <div class="owner-row-actions">
           <label>Price</label>
@@ -166,7 +198,7 @@ function setOwnerUI() {
   ownerPanelEl.hidden = !authed;
   ownerLoginFormEl.hidden = authed;
   ownerStatusEl.textContent = authed
-    ? "Owner mode active. You can add products and change pricing below."
+    ? "Owner mode active. You can add products, upload images, and change pricing below."
     : "Use owner passcode to manage products.";
 
   if (authed) renderOwnerProducts();
@@ -226,15 +258,38 @@ ownerLogoutBtnEl.addEventListener("click", () => {
   setOwnerUI();
 });
 
-ownerAddFormEl.addEventListener("submit", (event) => {
+ownerAddFormEl.addEventListener("submit", async (event) => {
   event.preventDefault();
   const products = loadProducts();
+
+  const selectedFile = ownerProductImageEl.files[0];
+  let imageData = "";
+
+  if (selectedFile) {
+    if (!selectedFile.type.startsWith("image/")) {
+      alert("Please select a valid image file.");
+      return;
+    }
+
+    if (selectedFile.size > 2 * 1024 * 1024) {
+      alert("Image is too large. Please use a file under 2MB.");
+      return;
+    }
+
+    try {
+      imageData = await fileToDataUrl(selectedFile);
+    } catch {
+      alert("Could not read image file.");
+      return;
+    }
+  }
 
   const newProduct = {
     id: `prod-${Date.now()}`,
     name: ownerProductNameEl.value.trim(),
     price: Number(ownerProductPriceEl.value),
-    description: ownerProductDescEl.value.trim()
+    description: ownerProductDescEl.value.trim(),
+    image: imageData
   };
 
   if (!newProduct.name || Number.isNaN(newProduct.price) || newProduct.price < 0) {
