@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Shop | Kim Jones Coaching</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header class="site-header">
+      <nav class="container nav">
+        <a href="index.html" class="brand" aria-label="Kim Jones Coaching home">
+          <span class="brand-main">KIM JONES</span><span class="brand-sub">COACHING</span>
+        </a>
+        <div class="nav-links"><a href="index.html">Home</a><a href="owner.html">Owner Login</a></div>
+      </nav>
+    </header>
+    <main>
+      <section class="section" id="shop">
+        <div class="container">
+          <div class="section-head"><p class="eyebrow">SportsCo Products</p><h2>Shop by category</h2></div>
+          <div id="product-list" class="shop-categories"></div>
+        </div>
+      </section>
+      <section class="section alt" id="cart">
+        <div class="container cart-layout">
+          <div><div class="section-head compact"><p class="eyebrow">Cart</p><h3>Your selected items</h3></div><div id="cart-items" class="cart-items"></div></div>
+          <aside class="cart-summary" id="checkout">
+            <h3>Order Summary</h3>
+            <div class="summary-row"><span>Subtotal</span><strong id="subtotal">$0.00</strong></div>
+            <div class="summary-row"><span>Estimated Tax (10%)</span><strong id="tax">$0.00</strong></div>
+            <div class="summary-row total"><span>Total</span><strong id="total">$0.00</strong></div>
+            <label for="stripe-link">Stripe Checkout Link</label>
+            <input id="stripe-link" type="url" placeholder="https://checkout.stripe.com/..." />
+            <p class="helper-text">Paste your Stripe payment link. The checkout button will use this URL.</p>
+            <button class="btn btn-primary full" id="checkout-btn">Proceed to Payment</button>
+            <button class="btn btn-secondary full" id="clear-cart-btn">Clear Cart</button>
+          </aside>
+        </div>
+      </section>
+    </main>
+    <script src="app.js"></script>
+  </body>
+</html>

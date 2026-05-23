@@ -163,26 +163,26 @@ function setOwnerUI() {
   if (authed) renderOwnerProducts();
 }
 
-productListEl.addEventListener("click", (event) => {
+if (productListEl) productListEl.addEventListener("click", (event) => {
   const button = event.target.closest(".add-to-cart");
   if (!button) return;
   const card = button.closest(".product-card");
   addToCart({ id: card.dataset.id, name: card.dataset.name, price: Number(card.dataset.price) });
 });
 
-cartItemsEl.addEventListener("click", (event) => {
+if (cartItemsEl) cartItemsEl.addEventListener("click", (event) => {
   const button = event.target.closest(".qty-btn");
   if (!button) return;
   updateQuantity(button.dataset.id, button.dataset.action);
 });
 
-clearCartBtnEl.addEventListener("click", () => {
+if (clearCartBtnEl) clearCartBtnEl.addEventListener("click", () => {
   saveCart([]);
   renderCart();
 });
 
-stripeInputEl.addEventListener("change", saveStripeLink);
-checkoutBtnEl.addEventListener("click", () => {
+if (stripeInputEl) stripeInputEl.addEventListener("change", saveStripeLink);
+if (checkoutBtnEl) checkoutBtnEl.addEventListener("click", () => {
   const cart = loadCart();
   const link = (localStorage.getItem(STRIPE_KEY) || "").trim();
   if (!cart.length) return alert("Your cart is empty. Add items before checkout.");
@@ -194,7 +194,7 @@ checkoutBtnEl.addEventListener("click", () => {
   window.location.href = link;
 });
 
-ownerLoginFormEl.addEventListener("submit", (event) => {
+if (ownerLoginFormEl) ownerLoginFormEl.addEventListener("submit", (event) => {
   event.preventDefault();
   if (ownerPasscodeEl.value === OWNER_PASSCODE) {
     setOwnerAuthed(true);
@@ -203,12 +203,12 @@ ownerLoginFormEl.addEventListener("submit", (event) => {
   } else alert("Incorrect passcode.");
 });
 
-ownerLogoutBtnEl.addEventListener("click", () => {
+if (ownerLogoutBtnEl) ownerLogoutBtnEl.addEventListener("click", () => {
   setOwnerAuthed(false);
   setOwnerUI();
 });
 
-ownerAddFormEl.addEventListener("submit", async (event) => {
+if (ownerAddFormEl) ownerAddFormEl.addEventListener("submit", async (event) => {
   event.preventDefault();
   const products = loadProducts();
   const selectedFile = ownerProductImageEl.files[0];
@@ -253,7 +253,7 @@ ownerAddFormEl.addEventListener("submit", async (event) => {
   renderOwnerProducts();
 });
 
-ownerProductsListEl.addEventListener("change", (event) => {
+if (ownerProductsListEl) ownerProductsListEl.addEventListener("change", (event) => {
   const priceInput = event.target.closest(".owner-price-input");
   const discountInput = event.target.closest(".owner-discount-input");
   if (!priceInput && !discountInput) return;
@@ -280,7 +280,7 @@ ownerProductsListEl.addEventListener("change", (event) => {
   renderCart();
 });
 
-ownerProductsListEl.addEventListener("click", (event) => {
+if (ownerProductsListEl) ownerProductsListEl.addEventListener("click", (event) => {
   const button = event.target.closest(".owner-remove-btn");
   if (!button) return;
   const id = button.dataset.id;
@@ -291,7 +291,7 @@ ownerProductsListEl.addEventListener("click", (event) => {
   renderCart();
 });
 
-loadStripeLink();
-renderProducts();
-renderCart();
-setOwnerUI();
+if (stripeInputEl) loadStripeLink();
+if (productListEl) renderProducts();
+if (cartItemsEl && subtotalEl && taxEl && totalEl) renderCart();
+if (ownerStatusEl && ownerPanelEl && ownerLoginFormEl) setOwnerUI();
