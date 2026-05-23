@@ -20,10 +20,10 @@
           <span class="brand-sub">COACHING</span>
         </a>
         <div class="nav-links">
-          <a href="#programs">Programs</a>
           <a href="#shop">Shop</a>
           <a href="#cart">Cart</a>
           <a href="#checkout">Checkout</a>
+          <a href="#owner">Owner Login</a>
         </div>
       </nav>
     </header>
@@ -33,11 +33,11 @@
         <div class="container hero-grid">
           <div class="hero-copy">
             <p class="eyebrow">Coaching + SportsCo Store</p>
-            <h1>Train better and buy the right gear in one place.</h1>
+            <h1>Easy product sales now, API integration later.</h1>
             <p>
-              Placeholder homepage copy for now. You can update all text later,
-              but the sales flow is ready for product selection, cart updates,
-              and Stripe checkout linking.
+              This setup gives you a lightweight sales system: upload products
+              yourself, adjust pricing anytime, and route payment through your
+              Stripe checkout link.
             </p>
           </div>
         </div>
@@ -49,29 +49,7 @@
             <p class="eyebrow">SportsCo Products</p>
             <h2>Add products to cart</h2>
           </div>
-
-          <div class="cards three-col" id="product-list">
-            <article class="product-card" data-id="agility-kit" data-name="Speed Agility Kit" data-price="59.99">
-              <h3>Speed Agility Kit</h3>
-              <p>Cones, ladder, and bands for movement sessions.</p>
-              <p class="price">$59.99</p>
-              <button class="btn btn-primary add-to-cart">Add to Cart</button>
-            </article>
-
-            <article class="product-card" data-id="power-bands" data-name="Resistance Power Bands" data-price="29.99">
-              <h3>Resistance Power Bands</h3>
-              <p>Warmup and strength band set.</p>
-              <p class="price">$29.99</p>
-              <button class="btn btn-primary add-to-cart">Add to Cart</button>
-            </article>
-
-            <article class="product-card" data-id="recovery-roller" data-name="Recovery Roller" data-price="34.99">
-              <h3>Recovery Roller</h3>
-              <p>Compact roller for post-session recovery.</p>
-              <p class="price">$34.99</p>
-              <button class="btn btn-primary add-to-cart">Add to Cart</button>
-            </article>
-          </div>
+          <div class="cards three-col" id="product-list"></div>
         </div>
       </section>
 
@@ -98,6 +76,35 @@
             <button class="btn btn-primary full" id="checkout-btn">Proceed to Payment</button>
             <button class="btn btn-secondary full" id="clear-cart-btn">Clear Cart</button>
           </aside>
+        </div>
+      </section>
+
+      <section class="section" id="owner">
+        <div class="container owner-wrap">
+          <div class="section-head">
+            <p class="eyebrow">Owner Access</p>
+            <h2>Manage products and prices without an API</h2>
+            <p id="owner-status" class="helper-text"></p>
+          </div>
+
+          <form id="owner-login-form" class="owner-login-form">
+            <label for="owner-passcode">Owner Passcode</label>
+            <input id="owner-passcode" type="password" placeholder="Enter passcode" required />
+            <button type="submit" class="btn btn-primary">Login</button>
+          </form>
+
+          <div id="owner-panel" hidden>
+            <form id="owner-add-form" class="owner-add-form">
+              <h3>Add Product</h3>
+              <input id="owner-product-name" type="text" placeholder="Product name" required />
+              <input id="owner-product-price" type="number" step="0.01" min="0" placeholder="Price" required />
+              <input id="owner-product-desc" type="text" placeholder="Short description" />
+              <button type="submit" class="btn btn-primary">Add Product</button>
+              <button type="button" id="owner-logout-btn" class="btn btn-secondary">Logout</button>
+            </form>
+
+            <div class="owner-products" id="owner-products-list"></div>
+          </div>
         </div>
       </section>
     </main>
