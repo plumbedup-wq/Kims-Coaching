@@ -23,7 +23,10 @@
           <a href="#about">About</a>
           <a href="#coaching">Coaching</a>
           <a href="shop.html">Shop</a>
-          <a href="owner.html">Owner Login</a>
+          <a href="account.html" data-auth-public>Login</a>
+          <a href="account.html?mode=signup" data-auth-public>Create Account</a>
+          <a href="account.html" data-auth-private hidden>My Account</a>
+          <button class="nav-button" type="button" data-sign-out hidden>Sign Out</button>
         </div>
       </nav>
     </header>

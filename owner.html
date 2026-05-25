@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Owner Login | Kim Jones Coaching</title>
+    <title>Admin Dashboard | Kim Jones Coaching</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -19,6 +19,12 @@
           <span class="brand-main">KIM JONES</span>
           <span class="brand-sub">COACHING</span>
         </a>
+        <div class="nav-links">
+          <a href="index.html#about">About</a>
+          <a href="shop.html">Shop</a>
+          <a href="account.html" data-auth-private hidden>My Account</a>
+          <button class="nav-button" type="button" data-sign-out hidden>Sign Out</button>
+        </div>
       </nav>
     </header>
 
@@ -26,16 +32,10 @@
       <section class="section" id="owner">
         <div class="container owner-wrap">
           <div class="section-head">
-            <p class="eyebrow">Owner Access</p>
+            <p class="eyebrow">Admin Dashboard</p>
             <h2>Manage products, categories, and prices</h2>
             <p id="owner-status" class="helper-text"></p>
           </div>
-
-          <form id="owner-login-form" class="owner-login-form">
-            <label for="owner-passcode">Owner Passcode</label>
-            <input id="owner-passcode" type="password" placeholder="Enter passcode" required />
-            <button type="submit" class="btn btn-primary">Login</button>
-          </form>
 
           <div id="owner-panel" hidden>
             <form id="owner-promo-form" class="owner-add-form">
@@ -63,7 +63,6 @@
               <label for="owner-product-image">Product image</label>
               <input id="owner-product-image" type="file" accept="image/*" />
               <button type="submit" class="btn btn-primary">Add Product</button>
-              <button type="button" id="owner-logout-btn" class="btn btn-secondary">Logout</button>
             </form>
 
             <div class="owner-products" id="owner-products-list"></div>

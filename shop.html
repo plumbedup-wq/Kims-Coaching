@@ -20,7 +20,10 @@
           <a href="index.html#about">About</a>
           <a href="index.html#coaching">Coaching</a>
           <a href="shop.html">Shop</a>
-          <a href="owner.html">Owner Login</a>
+          <a href="account.html" data-auth-public>Login</a>
+          <a href="account.html?mode=signup" data-auth-public>Create Account</a>
+          <a href="account.html" data-auth-private hidden>My Account</a>
+          <button class="nav-button" type="button" data-sign-out hidden>Sign Out</button>
         </div>
       </nav>
     </header>
@@ -67,6 +70,7 @@
             <label for="stripe-link">Stripe Checkout Link</label>
             <input id="stripe-link" type="url" placeholder="https://checkout.stripe.com/..." />
             <p class="helper-text">Paste your Stripe payment link. The checkout button will use this URL.</p>
+            <p class="helper-text" id="checkout-account-message"></p>
             <button class="btn btn-primary full" id="checkout-btn">Proceed to Payment</button>
             <button class="btn btn-secondary full" id="clear-cart-btn">Clear Cart</button>
           </aside>

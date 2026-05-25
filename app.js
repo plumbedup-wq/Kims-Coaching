@@ -1,10 +1,11 @@
 const CART_KEY = "kims_cart";
 const STRIPE_KEY = "kims_stripe_link";
 const PRODUCTS_KEY = "kims_products";
-const OWNER_AUTH_KEY = "kims_owner_authenticated";
+const ACCOUNTS_KEY = "kims_accounts";
+const SESSION_KEY = "kims_session";
 const PROMO_SETTINGS_KEY = "kims_promo_settings";
 const APPLIED_PROMO_CODE_KEY = "kims_applied_promo_code";
-const OWNER_PASSCODE = "coach-admin-2026";
+const ADMIN_EMAILS = ["kim@kimjonescoaching.co.nz"];
 
 const defaultProducts = [
   { id: "agility-kit", name: "Speed Agility Kit", price: 59.99, discount: 0, category: "Training", description: "Cones, ladder, and bands for movement sessions.", image: "" },
@@ -24,9 +25,8 @@ const promoDiscountEl = document.getElementById("promo-discount");
 const promoCodeEl = document.getElementById("promo-code");
 const applyPromoBtnEl = document.getElementById("apply-promo-btn");
 const promoMessageEl = document.getElementById("promo-message");
+const checkoutAccountMessageEl = document.getElementById("checkout-account-message");
 
-const ownerLoginFormEl = document.getElementById("owner-login-form");
-const ownerPasscodeEl = document.getElementById("owner-passcode");
 const ownerStatusEl = document.getElementById("owner-status");
 const ownerPanelEl = document.getElementById("owner-panel");
 const ownerAddFormEl = document.getElementById("owner-add-form");
@@ -37,7 +37,6 @@ const ownerProductCategoryEl = document.getElementById("owner-product-category")
 const ownerProductDescEl = document.getElementById("owner-product-desc");
 const ownerProductImageEl = document.getElementById("owner-product-image");
 const ownerProductsListEl = document.getElementById("owner-products-list");
-const ownerLogoutBtnEl = document.getElementById("owner-logout-btn");
 const categoryFilterEl = document.getElementById("category-filter");
 const ownerProductCategorySelectEl = document.getElementById("owner-product-category");
 const ownerNewCategoryEl = document.getElementById("owner-new-category");
@@ -46,10 +45,26 @@ const ownerPromoFormEl = document.getElementById("owner-promo-form");
 const ownerPromoCodeEl = document.getElementById("owner-promo-code");
 const ownerPromoPercentEl = document.getElementById("owner-promo-percent");
 const ownerPromoStatusEl = document.getElementById("owner-promo-status");
+const authFormEl = document.querySelector("[data-auth-form]");
+const authMessageEl = document.querySelector("[data-auth-message]");
+const authTitleEl = document.querySelector("[data-auth-title]");
+const authCopyEl = document.querySelector("[data-auth-copy]");
+const authSubmitEl = document.querySelector("[data-submit-auth]");
+const nameFieldEl = document.querySelector("[data-name-field]");
+const phoneFieldEl = document.querySelector("[data-phone-field]");
+const authSectionEl = document.querySelector("[data-auth-section]");
+const customerAreaEl = document.querySelector("[data-customer-area]");
+const customerGreetingEl = document.querySelector("[data-customer-greeting]");
+const customerDetailsEl = document.querySelector("[data-customer-details]");
+const customerCartEl = document.querySelector("[data-customer-cart]");
+const publicAuthEls = document.querySelectorAll("[data-auth-public]");
+const privateAuthEls = document.querySelectorAll("[data-auth-private]");
+const signOutEls = document.querySelectorAll("[data-sign-out]");
 
 const money = (v) => `$${v.toFixed(2)}`;
 const slugify = (v) => v.toLowerCase().trim().replace(/\s+/g, "-").replace(/[^a-z0-9-]/g, "");
 let selectedCategory = "all";
+let authMode = new URLSearchParams(window.location.search).get("mode") === "signup" ? "signup" : "login";
 
 function getDiscountedPrice(product) {
   const base = Number(product.price);
@@ -81,6 +96,183 @@ const saveProducts = (products) => localStorage.setItem(PRODUCTS_KEY, JSON.strin
 const loadCart = () => JSON.parse(localStorage.getItem(CART_KEY) || "[]");
 const saveCart = (cart) => localStorage.setItem(CART_KEY, JSON.stringify(cart));
 
+function loadAccounts() {
+  return JSON.parse(localStorage.getItem(ACCOUNTS_KEY) || "[]");
+}
+
+function saveAccounts(accounts) {
+  localStorage.setItem(ACCOUNTS_KEY, JSON.stringify(accounts));
+}
+
+function findAccountByEmail(email) {
+  return loadAccounts().find((account) => account.email.toLowerCase() === email.toLowerCase());
+}
+
+function saveSession(account) {
+  localStorage.setItem(
+    SESSION_KEY,
+    JSON.stringify({
+      id: account.id,
+      email: account.email,
+      role: account.role,
+    })
+  );
+}
+
+function loadSession() {
+  return JSON.parse(localStorage.getItem(SESSION_KEY) || "null");
+}
+
+function activeAccount() {
+  const session = loadSession();
+  if (!session) return null;
+  return loadAccounts().find((account) => account.id === session.id) || null;
+}
+
+function isAdminAccount(account) {
+  return account?.role === "admin";
+}
+
+function getAccountDestination(account) {
+  return isAdminAccount(account) ? "owner.html" : "account.html#customer-account";
+}
+
+function redirectAfterAuth(account) {
+  const destination = getAccountDestination(account);
+  const isAccountPage = window.location.pathname.endsWith("/account.html");
+
+  if (!isAdminAccount(account) && isAccountPage) {
+    history.replaceState(null, "", destination);
+    renderAccountNavigation();
+    renderCustomerAccount();
+    return;
+  }
+
+  window.location.href = destination;
+}
+
+function setAuthMode(mode) {
+  authMode = mode === "signup" ? "signup" : "login";
+  const isSignup = authMode === "signup";
+
+  document.querySelectorAll("[data-mode-button]").forEach((button) => {
+    const isActive = button.dataset.modeButton === authMode;
+    button.classList.toggle("active", isActive);
+    button.setAttribute("aria-selected", String(isActive));
+  });
+
+  if (nameFieldEl) nameFieldEl.hidden = !isSignup;
+  if (phoneFieldEl) phoneFieldEl.hidden = !isSignup;
+  if (authTitleEl) authTitleEl.textContent = isSignup ? "Create your account" : "Welcome back";
+  if (authCopyEl) {
+    authCopyEl.textContent = isSignup
+      ? "Set up your customer account before booking or buying SportsCo gear."
+      : "Access your coaching account and continue where you left off.";
+  }
+  if (authSubmitEl) authSubmitEl.textContent = isSignup ? "Create Account" : "Login";
+  if (authFormEl?.password) authFormEl.password.autocomplete = isSignup ? "new-password" : "current-password";
+  if (authMessageEl) {
+    authMessageEl.textContent = "";
+    authMessageEl.removeAttribute("data-tone");
+  }
+}
+
+function showAuthMessage(message, tone = "neutral") {
+  if (!authMessageEl) return;
+  authMessageEl.textContent = message;
+  authMessageEl.dataset.tone = tone;
+}
+
+function createAccount(formData) {
+  const email = formData.get("email").trim();
+  const password = formData.get("password");
+  const name = formData.get("name").trim();
+  const phone = formData.get("phone").trim();
+
+  if (!name) {
+    showAuthMessage("Please add your name to create an account.", "error");
+    return;
+  }
+
+  if (findAccountByEmail(email)) {
+    showAuthMessage("An account already exists for that email. Try logging in.", "error");
+    setAuthMode("login");
+    authFormEl.email.value = email;
+    return;
+  }
+
+  const account = {
+    id: `account-${Date.now()}`,
+    name,
+    email,
+    phone,
+    password,
+    role: ADMIN_EMAILS.includes(email.toLowerCase()) ? "admin" : "customer",
+  };
+
+  const accounts = loadAccounts();
+  accounts.push(account);
+  saveAccounts(accounts);
+  saveSession(account);
+  redirectAfterAuth(account);
+}
+
+function login(formData) {
+  const email = formData.get("email").trim();
+  const password = formData.get("password");
+  const account = findAccountByEmail(email);
+
+  if (!account || account.password !== password) {
+    showAuthMessage("Email or password did not match an account.", "error");
+    return;
+  }
+
+  saveSession(account);
+  redirectAfterAuth(account);
+}
+
+function renderAccountNavigation() {
+  const account = activeAccount();
+  publicAuthEls.forEach((item) => {
+    item.hidden = Boolean(account);
+  });
+  privateAuthEls.forEach((item) => {
+    item.hidden = !account;
+    if (account) item.href = getAccountDestination(account);
+  });
+  signOutEls.forEach((button) => {
+    button.hidden = !account;
+  });
+}
+
+function renderCustomerAccount() {
+  if (!customerAreaEl) return;
+  const account = activeAccount();
+  const showCustomerArea = account?.role === "customer";
+  customerAreaEl.hidden = !showCustomerArea;
+  if (authSectionEl) authSectionEl.hidden = Boolean(account);
+
+  if (!account) return;
+  if (isAdminAccount(account)) {
+    window.location.replace("owner.html");
+    return;
+  }
+
+  const firstName = account.name.split(" ")[0] || "there";
+  const cart = loadCart();
+  const itemCount = cart.reduce((total, item) => total + Number(item.quantity || 0), 0);
+  const cartTotal = cart.reduce((total, item) => total + Number(item.price) * Number(item.quantity || 0), 0);
+
+  if (customerGreetingEl) customerGreetingEl.textContent = `Welcome back, ${firstName}`;
+  if (customerDetailsEl) {
+    customerDetailsEl.textContent = `${account.email}${account.phone ? ` · ${account.phone}` : ""}`;
+  }
+  if (customerCartEl) {
+    customerCartEl.textContent = itemCount
+      ? `${itemCount} item${itemCount === 1 ? "" : "s"} saved, currently ${money(cartTotal)} before tax.`
+      : "Your cart is empty.";
+  }
+}
 
 function loadPromoSettings() {
   const raw = localStorage.getItem(PROMO_SETTINGS_KEY);
@@ -146,6 +338,7 @@ function renderProducts() {
   const products = loadProducts();
   renderCategoryFilter(products);
   renderOwnerCategorySelect(products);
+  if (!productListEl) return;
 
   const filteredProducts = selectedCategory === "all"
     ? products
@@ -177,6 +370,7 @@ function renderProducts() {
 }
 
 function renderCart() {
+  if (!cartItemsEl) return;
   const cart = loadCart();
   cartItemsEl.innerHTML = !cart.length
     ? `<p class="empty-cart">Your cart is empty. Add a SportsCo product above.</p>`
@@ -219,10 +413,9 @@ function updateQuantity(productId, action) {
 
 const loadStripeLink = () => (stripeInputEl.value = localStorage.getItem(STRIPE_KEY) || "");
 const saveStripeLink = () => localStorage.setItem(STRIPE_KEY, stripeInputEl.value.trim());
-const isOwnerAuthed = () => localStorage.getItem(OWNER_AUTH_KEY) === "true";
-const setOwnerAuthed = (value) => localStorage.setItem(OWNER_AUTH_KEY, value ? "true" : "false");
 
 function renderOwnerProducts() {
+  if (!ownerProductsListEl) return;
   const products = loadProducts();
   ownerProductsListEl.innerHTML = products
     .map(
@@ -232,11 +425,25 @@ function renderOwnerProducts() {
 }
 
 function setOwnerUI() {
-  const authed = isOwnerAuthed();
+  if (!ownerPanelEl || !ownerStatusEl) return;
+  const account = activeAccount();
+  const authed = isAdminAccount(account);
   ownerPanelEl.hidden = !authed;
-  ownerLoginFormEl.hidden = authed;
-  ownerStatusEl.textContent = authed ? "Owner mode active. You can add products, categories, upload images, and manage discounts." : "Use owner passcode to manage products.";
-  if (authed) renderOwnerProducts();
+
+  if (!account) {
+    ownerStatusEl.innerHTML = 'Please <a href="account.html">log in</a> to continue.';
+    window.location.replace("account.html");
+    return;
+  }
+
+  if (!authed) {
+    ownerStatusEl.textContent = "This area is available to admin accounts only.";
+    window.location.replace("account.html#customer-account");
+    return;
+  }
+
+  ownerStatusEl.textContent = `Signed in as ${account.email}. You can add products, categories, upload images, and manage discounts.`;
+  renderOwnerProducts();
 }
 
 if (productListEl) productListEl.addEventListener("click", (event) => {
@@ -303,28 +510,20 @@ if (applyPromoBtnEl) applyPromoBtnEl.addEventListener("click", () => {
 
 if (checkoutBtnEl) checkoutBtnEl.addEventListener("click", () => {
   const cart = loadCart();
+  const account = activeAccount();
   const link = (localStorage.getItem(STRIPE_KEY) || "").trim();
   if (!cart.length) return alert("Your cart is empty. Add items before checkout.");
+  if (!account) {
+    if (checkoutAccountMessageEl) checkoutAccountMessageEl.textContent = "Please log in or create an account before checkout.";
+    window.location.href = "account.html?mode=signup";
+    return;
+  }
   if (!link) {
     alert("Please add your Stripe checkout link first.");
     stripeInputEl.focus();
     return;
   }
   window.location.href = link;
-});
-
-if (ownerLoginFormEl) ownerLoginFormEl.addEventListener("submit", (event) => {
-  event.preventDefault();
-  if (ownerPasscodeEl.value === OWNER_PASSCODE) {
-    setOwnerAuthed(true);
-    ownerPasscodeEl.value = "";
-    setOwnerUI();
-  } else alert("Incorrect passcode.");
-});
-
-if (ownerLogoutBtnEl) ownerLogoutBtnEl.addEventListener("click", () => {
-  setOwnerAuthed(false);
-  setOwnerUI();
 });
 
 if (ownerPromoFormEl) ownerPromoFormEl.addEventListener("submit", (event) => {
@@ -424,10 +623,39 @@ if (ownerProductsListEl) ownerProductsListEl.addEventListener("click", (event) =
   renderCart();
 });
 
+document.querySelectorAll("[data-mode-button]").forEach((button) => {
+  button.addEventListener("click", () => setAuthMode(button.dataset.modeButton));
+});
+
+if (authFormEl) authFormEl.addEventListener("submit", (event) => {
+  event.preventDefault();
+
+  if (!authFormEl.checkValidity()) {
+    showAuthMessage("Please complete the required fields.", "error");
+    authFormEl.reportValidity();
+    return;
+  }
+
+  const formData = new FormData(authFormEl);
+  if (authMode === "signup") createAccount(formData);
+  else login(formData);
+});
+
+signOutEls.forEach((button) => {
+  button.addEventListener("click", () => {
+    localStorage.removeItem(SESSION_KEY);
+    renderAccountNavigation();
+    window.location.href = "account.html";
+  });
+});
+
 if (stripeInputEl) loadStripeLink();
+renderAccountNavigation();
+if (authFormEl) setAuthMode(authMode);
 if (productListEl) renderProducts();
 if (cartItemsEl) renderCart();
 if (ownerStatusEl) setOwnerUI();
+renderCustomerAccount();
 
 if (promoCodeEl) {
   const applied = localStorage.getItem(APPLIED_PROMO_CODE_KEY) || "";

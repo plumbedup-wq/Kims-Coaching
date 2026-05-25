@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Account | Kim Jones Coaching</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header class="site-header">
+      <nav class="container nav">
+        <a href="index.html" class="brand" aria-label="Kim Jones Coaching home">
+          <span class="brand-main">KIM JONES</span>
+          <span class="brand-sub">COACHING</span>
+        </a>
+        <div class="nav-links">
+          <a href="index.html#about">About</a>
+          <a href="index.html#coaching">Coaching</a>
+          <a href="shop.html">Shop</a>
+          <a href="account.html" data-auth-public>Login</a>
+          <a href="account.html?mode=signup" data-auth-public>Create Account</a>
+          <a href="account.html" data-auth-private hidden>My Account</a>
+          <button class="nav-button" type="button" data-sign-out hidden>Sign Out</button>
+        </div>
+      </nav>
+    </header>
+
+    <main>
+      <section class="section account-section" id="account-access" data-auth-section>
+        <div class="container account-grid">
+          <div class="account-copy">
+            <p class="eyebrow">Client Access</p>
+            <h1>Login or create an account before checkout.</h1>
+            <p>
+              Save your details, return to SportsCo recommendations, and keep
+              purchases connected to your coaching account.
+            </p>
+          </div>
+
+          <section class="auth-card" aria-label="Account access">
+            <div class="mode-switch" role="tablist" aria-label="Form mode">
+              <button type="button" class="active" data-mode-button="login" role="tab" aria-selected="true">Login</button>
+              <button type="button" data-mode-button="signup" role="tab" aria-selected="false">Sign Up</button>
+            </div>
+
+            <h2 data-auth-title>Welcome back</h2>
+            <p class="muted" data-auth-copy>Access your coaching account and continue where you left off.</p>
+
+            <form class="auth-form" data-auth-form novalidate>
+              <label data-name-field hidden>
+                Full name
+                <input type="text" name="name" placeholder="Alex Morgan" autocomplete="name" />
+              </label>
+
+              <label>
+                Email
+                <input type="email" name="email" placeholder="you@example.com" autocomplete="email" required />
+              </label>
+
+              <label>
+                Password
+                <input type="password" name="password" placeholder="Enter your password" autocomplete="current-password" required minlength="8" />
+              </label>
+
+              <label data-phone-field hidden>
+                Mobile
+                <input type="tel" name="phone" placeholder="+64 21 000 0000" autocomplete="tel" />
+              </label>
+
+              <button type="submit" class="btn btn-primary full" data-submit-auth>Login</button>
+              <p class="form-message" data-auth-message role="status" aria-live="polite"></p>
+            </form>
+          </section>
+        </div>
+      </section>
+
+      <section class="section account-area" id="customer-account" data-customer-area hidden>
+        <div class="container dashboard-grid">
+          <div>
+            <p class="eyebrow">Customer Account</p>
+            <h1 data-customer-greeting>Your coaching hub</h1>
+            <p>Review your cart, saved details, and coaching next steps from one place.</p>
+          </div>
+          <div class="dashboard-card">
+            <h3>Saved Details</h3>
+            <p data-customer-details>No details saved yet.</p>
+          </div>
+          <div class="dashboard-card">
+            <h3>Current Cart</h3>
+            <p data-customer-cart>Your cart is empty.</p>
+            <a class="btn btn-primary full" href="shop.html#cart">Continue Shopping</a>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <script src="app.js"></script>
+  </body>
+</html>
