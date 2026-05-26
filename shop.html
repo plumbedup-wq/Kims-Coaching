@@ -11,14 +11,21 @@
   </head>
   <body>
     <header class="site-header">
-      <nav class="container nav">
+      <nav class="container nav" aria-label="Primary navigation">
         <a href="index.html" class="brand" aria-label="Kim Jones Coaching home">
           <span class="brand-main">KIM JONES</span>
           <span class="brand-sub">COACHING</span>
         </a>
-        <div class="nav-links">
+        <button class="menu-toggle" type="button" aria-label="Open menu" aria-controls="primary-nav" aria-expanded="false" data-menu-toggle>
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+        <div class="nav-links" id="primary-nav" data-nav-links>
           <a href="index.html#about">About</a>
-          <a href="index.html#coaching">Coaching</a>
+          <a href="index.html#philosophy">Philosophy</a>
+          <a href="index.html#programmes">Programmes</a>
+          <a href="index.html#contact">Contact</a>
           <a href="shop.html">Shop</a>
           <a href="account.html" data-auth-public>Login</a>
           <a href="account.html?mode=signup" data-auth-public>Create Account</a>

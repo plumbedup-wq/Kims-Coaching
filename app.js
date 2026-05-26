@@ -60,6 +60,8 @@ const customerCartEl = document.querySelector("[data-customer-cart]");
 const publicAuthEls = document.querySelectorAll("[data-auth-public]");
 const privateAuthEls = document.querySelectorAll("[data-auth-private]");
 const signOutEls = document.querySelectorAll("[data-sign-out]");
+const menuToggleEl = document.querySelector("[data-menu-toggle]");
+const navLinksEl = document.querySelector("[data-nav-links]");
 
 const money = (v) => `$${v.toFixed(2)}`;
 const slugify = (v) => v.toLowerCase().trim().replace(/\s+/g, "-").replace(/[^a-z0-9-]/g, "");
@@ -648,6 +650,21 @@ signOutEls.forEach((button) => {
     window.location.href = "account.html";
   });
 });
+
+if (menuToggleEl && navLinksEl) {
+  menuToggleEl.addEventListener("click", () => {
+    const isOpen = navLinksEl.classList.toggle("open");
+    menuToggleEl.setAttribute("aria-expanded", String(isOpen));
+    menuToggleEl.setAttribute("aria-label", isOpen ? "Close menu" : "Open menu");
+  });
+
+  navLinksEl.addEventListener("click", (event) => {
+    if (!event.target.closest("a")) return;
+    navLinksEl.classList.remove("open");
+    menuToggleEl.setAttribute("aria-expanded", "false");
+    menuToggleEl.setAttribute("aria-label", "Open menu");
+  });
+}
 
 if (stripeInputEl) loadStripeLink();
 renderAccountNavigation();
